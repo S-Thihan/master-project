@@ -6,6 +6,7 @@ import Main from './layouts/Main.tsx'
 import Home from './Pages/Home.tsx'
 import Login from './Pages/Login.tsx'
 import Register from './Pages/Register.tsx'
+import ProductDetails from './Pages/ProductDetails.tsx'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register />
+      },
+      {
+        path: "/products/:id",
+        element: <ProductDetails />
       }
     ]
   }
