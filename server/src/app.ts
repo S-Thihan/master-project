@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./db/dbConnect";
+import { query } from "express-validator";
 import userRoutes from "./routes/user";
 import productRoutes from "./routes/product";
 import errorHandler from "./middlewares/errorHandler";
