@@ -3,41 +3,71 @@ import { LoginSchema } from "../schema/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import z from "zod"
 import { Link } from "react-router"
+import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
 
 type FormInputs = z.infer<typeof LoginSchema>
 
 function Login() {
-    const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormInputs>({
-        resolver: zodResolver(LoginSchema)
+    const form = useForm<z.infer<typeof LoginSchema>>({
+        resolver: zodResolver(LoginSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
     })
 
-    const submit: SubmitHandler<FormInputs> = (data) => {
+    const onSubmit: SubmitHandler<FormInputs> = (data) => {
         console.log(data)
     }
     return (
         <section className="flex h-[70vh] w-full justify-center items-center">
-            <div className="w-1/2 border-2 border-gray-200 p-8 rounded-xl">
+            <div className="w-1/3 border-2 border-gray-200 p-8 rounded-xl">
                 <h2 className="font-bold text-center mb-4">FASH.com</h2>
-                <p className="text-sm font-medium text-gray-400 text-center">
+                <p className="text-xs font-medium text-gray-400 text-center mb-4">
                     Enter your information to login
                 </p>
-                <form onSubmit={handleSubmit(submit)} className="mt-4 space-y-4">
-                    <div>
-                        <label htmlFor="email" className="text-sm font-medium mb-4">Email</label>
-                        <input type="text" placeholder="fash.com" {...register("email")} className="text-sm font-medium border border-gray-400 rounded-xl py-2 ps-2 w-full" />
-                        {errors.email && <span className="text-xs font-medium mt-2 text-red-600">{errors.email.message}</span>}
-                    </div>
-                    <div>
-                        <label htmlFor="password" className="text-sm font-medium mb-4">Password</label>
-                        <input type="password" placeholder="******" {...register("password")} className="text-sm font-medium border border-gray-400 rounded-xl py-2 ps-2 w-full" />
-                        {errors.password && <span className="text-xs font-medium mt-2 text-red-600">{errors.password.message}</span>}
-                    </div>
-                    <button className="bg-black w-full text-center text-white font-bold py-2 rounded-xl" disabled={isSubmitting}>
-                        Register
-                    </button>
-                </form>
-                <p className="text-sm text-center mt-6 font-medium">Don't have an account? <Link to={"/register"} className="underline">Register Here</Link></p>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="example@hello.com" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="******" {...field} type="password" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button className="w-full">Login</Button>
+                    </form>
+                </Form>
+                <p className="text-xs text-center mt-6 font-medium">Don't have an account? <Link to={"/register"} className="underline">Register Here</Link></p>
             </div>
 
         </section>
