@@ -10,6 +10,8 @@ import ProductDetails from './Pages/ProductDetails.tsx'
 import { Provider } from 'react-redux'
 import { store } from './store/index.ts'
 import { Toaster } from 'sonner'
+import Profile from './Pages/Profile.tsx'
+import IsLogin from './Pages/isLogin.tsx'
 
 const router = createBrowserRouter([
   {
@@ -31,6 +33,13 @@ const router = createBrowserRouter([
       {
         path: "/products/:id",
         element: <ProductDetails />
+      },
+      {
+        path: "/profile",
+        element: (
+          <IsLogin>
+            <Profile />
+          </IsLogin>)
       }
     ]
   }

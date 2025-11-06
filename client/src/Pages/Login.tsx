@@ -15,14 +15,17 @@ import {
 import { Input } from "@/components/ui/input"
 import { useLoginMutation } from "@/store/slices/userApi"
 import { toast } from "sonner"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { setUserInfo } from "@/store/slices/auth"
+import type { RootState } from "@/store"
+import { useEffect } from "react"
 
 
 type FormInputs = z.infer<typeof LoginSchema>
 
 function Login() {
     const navigate = useNavigate();
+    const userInfo = useSelector((state: RootState) => state.auth.userInfo)
     const [loginMutation, { isLoading }] = useLoginMutation();
     const dispatch = useDispatch();
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -32,6 +35,12 @@ function Login() {
             password: "",
         },
     })
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate("/");
+        }
+    }, [navigate, userInfo]);
 
     const onSubmit: SubmitHandler<FormInputs> = async (data) => {
         try {

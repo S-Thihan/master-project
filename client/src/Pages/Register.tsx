@@ -15,9 +15,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRegisterMutation } from "@/store/slices/userApi"
 import { toast } from "sonner"
+import { useEffect } from "react"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store"
 
 type formInputs = z.infer<typeof registerSchema>
 function Register() {
+    const userInfo = useSelector((state: RootState) => state.auth.userInfo)
     const [registerMutation, { isLoading }] = useRegisterMutation();
     const navigate = useNavigate();
 
@@ -42,6 +46,13 @@ function Register() {
             toast.error(error?.data.message)
         }
     }
+
+    useEffect(() => { 
+        if(userInfo){
+            navigate("/")
+        }
+    }, [navigate,userInfo])
+
     return <section className="flex h-[70vh] w-full justify-center items-center">
         <div className="w-1/3 border-2 border-gray-200 p-8 rounded-xl">
             <h2 className="font-bold text-center mb-4">FASH.COM</h2>
