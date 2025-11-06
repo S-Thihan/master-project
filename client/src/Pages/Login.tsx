@@ -2,7 +2,7 @@ import { useForm, type SubmitHandler } from "react-hook-form"
 import { LoginSchema } from "../schema/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import z from "zod"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -13,11 +13,18 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useLoginMutation } from "@/store/slices/userApi"
+import { toast } from "sonner"
+import { useDispatch } from "react-redux"
+import { setUserInfo } from "@/store/slices/auth"
 
 
 type FormInputs = z.infer<typeof LoginSchema>
 
 function Login() {
+    const navigate = useNavigate();
+    const [loginMutation, { isLoading }] = useLoginMutation();
+    const dispatch = useDispatch();
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -26,8 +33,16 @@ function Login() {
         },
     })
 
-    const onSubmit: SubmitHandler<FormInputs> = (data) => {
-        console.log(data)
+    const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+        try {
+            const res = await loginMutation(data).unwrap()
+            dispatch(setUserInfo(res))
+            form.reset()
+            toast.success("Login in successfully.")
+            navigate("/");
+        } catch (error: any) {
+            toast.error(error?.data.message)
+        }
     }
     return (
         <section className="flex h-[70vh] w-full justify-center items-center">
@@ -64,7 +79,7 @@ function Login() {
                                 </FormItem>
                             )}
                         />
-                        <Button className="w-full">Login</Button>
+                        <Button className="w-full" disabled={isLoading}>Login</Button>
                     </form>
                 </Form>
                 <p className="text-xs text-center mt-6 font-medium">Don't have an account? <Link to={"/register"} className="underline">Register Here</Link></p>

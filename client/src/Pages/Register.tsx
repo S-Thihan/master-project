@@ -2,7 +2,7 @@ import { useForm, type SubmitHandler } from "react-hook-form"
 import type z from "zod"
 import { registerSchema } from "../schema/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import {
     Form,
     FormControl,
@@ -13,21 +13,34 @@ import {
 } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useRegisterMutation } from "@/store/slices/userApi"
+import { toast } from "sonner"
 
 type formInputs = z.infer<typeof registerSchema>
 function Register() {
+    const [registerMutation, { isLoading }] = useRegisterMutation();
+    const navigate = useNavigate();
 
     const form = useForm<formInputs>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            username: "",
+            name: "",
             email: "",
             password: "",
         },
     });
 
-    const onSubmit: SubmitHandler<formInputs> = (data) => {
-        console.log(data)
+
+
+    const onSubmit: SubmitHandler<formInputs> = async (data) => {
+        try {
+            await registerMutation(data).unwrap()
+            form.reset()
+            toast.success("Registered successfully.")
+            navigate("/login");
+        } catch (error: any) {
+            toast.error(error?.data.message)
+        }
     }
     return <section className="flex h-[70vh] w-full justify-center items-center">
         <div className="w-1/3 border-2 border-gray-200 p-8 rounded-xl">
@@ -37,7 +50,7 @@ function Register() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
                         control={form.control}
-                        name="username"
+                        name="name"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Fullname</FormLabel>
@@ -74,7 +87,7 @@ function Register() {
                             </FormItem>
                         )}
                     />
-                    <Button className="w-full">Register</Button>
+                    <Button className="w-full" disabled={isLoading}>Register</Button>
                 </form>
             </Form>
             <p className="text-xs text-center mt-6 font-medium">Already have an account? <Link to={"/login"} className="underline">Login Here</Link></p>

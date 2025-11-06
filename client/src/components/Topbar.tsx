@@ -1,5 +1,6 @@
-import { ShoppingCart, User } from "lucide-react"
+import { ShoppingCart, LogIn } from "lucide-react"
 import SearchBox from "../common/SearchBox"
+import { Link } from "react-router"
 
 
 
@@ -16,7 +17,7 @@ function Topbar({ toggleCart }: TopbarProps) {
                 <SearchBox />
                 <div className="flex items-center gap-4 cursor-pointer">
                     <ShoppingCart onClick={toggleCart} />
-                    <User />
+                    <Link to={"/login"}><LogIn /></Link>
                 </div>
             </div>
         </main >
